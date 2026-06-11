@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Polarise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --blue:#90D5FF; --blue-deep:#4FA9DD; --coin:#2E8BC0;
+    --pink:#FFB0C8; --pink-deep:#F27DA0;
+    --mint:#A8E6CF; --mint-deep:#5FC79A;
+    --lav:#C9B6E4; --coral:#FF8A8A;
+    --bg-2:#EAF6FF; --card:#FFFFFF; --card-hi:#F4FBFF; --line:#DCEEF9;
+    --ivory:#2D4A5B; --muted:#6E8DA0; --muted-2:#A2BACA;
+    --radius:20px; --shadow:0 12px 30px rgba(120,180,220,.20);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:'Nunito',system-ui,sans-serif;background:radial-gradient(120% 70% at 50% -5%, #DCF1FF 0%, #F3FAFF 45%, #FFFFFF 100%);color:var(--ivory);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  .app{max-width:460px;margin:0 auto;padding:0 16px 120px;}
+
+  header{padding:22px 2px 14px;display:flex;align-items:center;justify-content:space-between;}
+  .brand h1{font-family:'Quicksand',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.3px;margin:0;background:linear-gradient(92deg,var(--blue-deep),var(--pink-deep) 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .brand h1 .em{-webkit-text-fill-color:initial;font-size:22px;}
+  .h-right{display:flex;align-items:center;gap:9px;}
+  .role-badge{font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;padding:6px 11px;border-radius:999px;display:flex;align-items:center;gap:5px;}
+  .role-badge.master{background:rgba(79,169,221,.16);color:var(--blue-deep);}
+  .role-badge.player{background:rgba(242,125,160,.16);color:var(--pink-deep);}
+  .gear{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:6px;border-radius:12px;}
+  .gear:active{background:var(--bg-2);}
+
+  .peekbar{display:flex;align-items:center;gap:8px;background:rgba(79,169,221,.12);border:1px solid rgba(79,169,221,.3);color:var(--blue-deep);font-weight:700;font-size:13px;padding:10px 14px;border-radius:14px;margin:14px 0 2px;}
+  .peekbar button{margin-left:auto;background:var(--blue);color:#15455F;border:none;font-family:'Quicksand',sans-serif;font-weight:700;font-size:12.5px;padding:8px 13px;border-radius:999px;cursor:pointer;}
+
+  .hero{background:linear-gradient(160deg,#FFFFFF,var(--card-hi));border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px;position:relative;overflow:hidden;}
+  .hero:after{content:"🌸";position:absolute;right:-6px;bottom:-10px;font-size:64px;opacity:.10;transform:rotate(-12deg);}
+  .hero.master:after{content:"⚔️";font-size:58px;opacity:.08;}
+  .hero .who{font-family:'Quicksand',sans-serif;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;font-weight:600;}
+  .hero .bal{display:flex;align-items:flex-end;gap:8px;}
+  .hero .bal .num{font-family:'Quicksand',sans-serif;font-weight:700;font-size:52px;line-height:.95;color:var(--coin);}
+  .hero .bal .lab{font-size:13px;color:var(--muted);margin-bottom:9px;font-weight:600;}
+  .hero-meta{display:flex;gap:16px;margin-top:16px;align-items:center;flex-wrap:wrap;}
+  .pill{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ivory);font-weight:700;}
+  .pill .e{font-size:15px;}
+  .owe-pill{margin-top:14px;background:rgba(46,139,192,.10);border:1px solid rgba(46,139,192,.3);border-radius:12px;padding:10px 13px;font-size:13px;font-weight:700;color:var(--coin);display:flex;align-items:center;gap:7px;}
+  .xpwrap{margin-top:14px;}
+  .xpbar{height:10px;background:#E8F4FC;border-radius:99px;overflow:hidden;border:1px solid var(--line);}
+  .xpfill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--pink));border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .xptext{display:flex;justify-content:space-between;font-size:11px;color:var(--muted-2);margin-top:6px;font-weight:600;}
+
+  .tabs{display:flex;gap:6px;margin-bottom:16px;}
+  .tabs button{flex:1;background:#FFFFFF;border:1px solid var(--line);color:var(--muted);font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;padding:11px;border-radius:14px;cursor:pointer;transition:.15s;}
+  .tabs button.active{background:var(--blue);color:#15455F;border-color:var(--blue);}
+
+  .section-head{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 12px;}
+  .section-head h2{font-family:'Quicksand',sans-serif;font-weight:700;font-size:19px;margin:0;}
+  .grouplab{font-size:12px;color:var(--muted);margin:0 2px 9px;letter-spacing:.5px;text-transform:uppercase;font-weight:700;}
+  .grouplab.sp{margin-top:18px;}
+  .grouplab.coin{color:var(--coin);}
+  .add-btn{background:var(--blue);color:#15455F;border:none;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;padding:9px 14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 4px 12px rgba(144,213,255,.5);}
+  .add-btn:active{transform:scale(.96);}
+
+  .quest{background:#FFFFFF;border:1px solid var(--line);border-radius:var(--radius);padding:15px 15px 14px;margin-bottom:11px;position:relative;transition:.2s;box-shadow:0 6px 16px rgba(120,180,220,.10);}
+  .quest.done{opacity:.6;}
+  .quest .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
+  .quest .title{font-weight:700;font-size:15.5px;line-height:1.3;}
+  .quest.done .title{text-decoration:line-through;text-decoration-color:var(--muted-2);}
+  .quest .note{color:var(--muted);font-size:13px;margin-top:5px;line-height:1.45;font-weight:500;}
+  .reward-tag{flex-shrink:0;background:rgba(46,139,192,.14);color:var(--coin);border:1px solid rgba(46,139,192,.32);font-weight:800;font-size:13px;padding:5px 10px;border-radius:999px;white-space:nowrap;}
+  .quest .meta{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11.5px;color:var(--muted-2);flex-wrap:wrap;font-weight:600;}
+  .quest .act{margin-top:13px;}
+  .complete-btn{width:100%;background:linear-gradient(95deg,var(--mint),var(--mint-deep));color:#15553B;border:none;font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer;transition:.15s;box-shadow:0 4px 12px rgba(95,199,154,.4);}
+  .complete-btn:active{transform:scale(.98);}
+  .done-stamp{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--mint-deep);font-weight:700;font-size:13.5px;padding:11px;}
+  .waiting{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:600;font-size:13px;padding:10px 0 2px;}
+  .x-btn{background:none;border:none;color:var(--muted-2);font-size:13px;cursor:pointer;margin-left:auto;font-weight:700;text-decoration:underline;font-family:inherit;}
+
+  .reward{background:linear-gradient(150deg,#FFFFFF,var(--card-hi));border:1px solid var(--line);border-radius:var(--radius);padding:15px;margin-bottom:11px;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:0 6px 16px rgba(120,180,220,.10);}
+  .reward .info .t{font-weight:700;font-size:15px;}
+  .reward .info .c{color:var(--coin);font-weight:700;font-size:13px;margin-top:4px;display:flex;align-items:center;gap:4px;}
+  .redeem-btn{background:var(--pink);color:#7A1E3C;border:none;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;padding:11px 16px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.15s;box-shadow:0 4px 12px rgba(255,176,200,.55);}
+  .redeem-btn:disabled{background:#EEF4F8;color:var(--muted-2);cursor:not-allowed;border:1px solid var(--line);box-shadow:none;}
+  .redeem-btn:active:not(:disabled){transform:scale(.96);}
+  .reward-del{background:none;border:none;color:var(--muted-2);font-size:20px;cursor:pointer;line-height:1;padding:4px 6px;border-radius:8px;}
+  .reward-del:active{background:var(--bg-2);}
+  .reward-edit{background:rgba(79,169,221,.12);border:1px solid rgba(79,169,221,.25);color:var(--blue-deep);font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;padding:7px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+  .reward-edit:active{background:rgba(79,169,221,.25);}
+  .reward-actions{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+
+  .pending{background:rgba(46,139,192,.12);border:1px dashed rgba(46,139,192,.45);border-radius:16px;padding:13px 15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .pending.soft{background:rgba(255,176,200,.14);border-color:rgba(242,125,160,.4);}
+  .pending .t{font-weight:700;font-size:14px;}
+  .pending .s{font-size:12px;color:var(--muted);margin-top:3px;font-weight:600;}
+  .fulfill-btn{background:var(--coin);color:#0E3A52;border:none;font-family:'Quicksand',sans-serif;font-weight:700;font-size:12.5px;padding:10px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+
+  .daily-bar{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 16px;margin-bottom:10px;box-shadow:0 4px 12px rgba(120,180,220,.10);}
+  .daily-progress{display:flex;align-items:baseline;gap:7px;}
+  .dp-count{font-family:'Quicksand',sans-serif;font-weight:700;font-size:26px;color:var(--coin);}
+  .dp-sep{font-size:18px;color:var(--muted-2);margin:0 1px;}
+  .dp-label{font-size:13px;color:var(--muted);font-weight:600;}
+  .dp-reset{font-size:12px;color:var(--muted-2);font-weight:600;}
+  .day-xpbar{height:7px;background:#E8F4FC;border-radius:99px;overflow:hidden;border:1px solid var(--line);margin-bottom:16px;}
+  .day-xpfill{height:100%;background:linear-gradient(90deg,var(--mint),var(--mint-deep));border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .all-done-card{background:linear-gradient(135deg,rgba(168,230,207,.3),rgba(144,213,255,.3));border:1px solid var(--mint);border-radius:16px;padding:16px;text-align:center;font-weight:700;font-size:14px;color:var(--mint-deep);margin-bottom:14px;}
+  .feed-item .ic{width:36px;height:36px;border-radius:50%;background:var(--bg-2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .feed-item .tx{font-size:13.5px;line-height:1.4;font-weight:500;}
+  .feed-item .tx b{color:var(--ivory);font-weight:800;}
+  .feed-item .tm{font-size:11px;color:var(--muted-2);margin-top:3px;font-weight:600;}
+
+  .empty{text-align:center;color:var(--muted-2);padding:42px 20px;font-size:14px;line-height:1.6;font-weight:600;}
+  .empty .big{font-size:34px;display:block;margin-bottom:10px;opacity:.85;}
+
+  .rolepick{min-height:88vh;display:flex;align-items:center;justify-content:center;padding:20px 4px;}
+  .rp-card{width:100%;text-align:center;}
+  .rp-logo{font-family:'Quicksand',sans-serif;font-weight:700;font-size:40px;background:linear-gradient(92deg,var(--blue-deep),var(--pink-deep));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .rp-logo .em{-webkit-text-fill-color:initial;}
+  .rp-sub{color:var(--muted);font-weight:600;margin:6px 0 26px;font-size:15px;}
+  .rp-btn{width:100%;display:flex;align-items:center;gap:14px;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:18px;margin-bottom:13px;cursor:pointer;font-family:inherit;transition:.18s;box-shadow:0 8px 20px rgba(120,180,220,.12);}
+  .rp-btn:active{transform:scale(.98);}
+  .rp-btn .rp-ic{width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;position:relative;}
+  .rp-btn.master .rp-ic{background:rgba(144,213,255,.3);}
+  .rp-btn.player .rp-ic{background:rgba(255,176,200,.3);}
+  .rp-btn .lock{position:absolute;right:-4px;bottom:-4px;font-size:15px;background:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.12);}
+  .rp-btn b{font-family:'Quicksand',sans-serif;font-size:18px;display:block;color:var(--ivory);}
+  .rp-btn small{color:var(--muted);font-size:13px;font-weight:600;}
+  .rp-btn.master{border-color:rgba(144,213,255,.6);}
+  .rp-btn.player{border-color:rgba(255,176,200,.6);}
+  .rp-foot{color:var(--muted-2);font-size:12px;margin-top:14px;font-weight:600;}
+
+  .scrim{position:fixed;inset:0;background:rgba(90,140,180,.35);backdrop-filter:blur(5px);display:none;align-items:flex-end;justify-content:center;z-index:50;}
+  .scrim.show{display:flex;}
+  .sheet{width:100%;max-width:460px;background:#FFFFFF;border:1px solid var(--line);border-bottom:none;border-radius:26px 26px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -18px 50px rgba(90,140,180,.25);animation:rise .28s cubic-bezier(.2,.9,.3,1);}
+  @keyframes rise{from{transform:translateY(100%);}to{transform:translateY(0);}}
+  .sheet h3{font-family:'Quicksand',sans-serif;font-weight:700;font-size:21px;margin:0 0 6px;}
+  .sheet .hint{color:var(--muted);font-size:13px;font-weight:600;margin:0 0 16px;line-height:1.45;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.3px;}
+  .field input[type=text],.field input[type=password],.field textarea{width:100%;background:var(--card-hi);border:1px solid var(--line);border-radius:14px;color:var(--ivory);font-family:inherit;font-size:15px;padding:13px;resize:none;font-weight:600;}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--blue);background:#fff;}
+  .pts-row{display:flex;align-items:center;gap:14px;}
+  .pts-row input[type=range]{flex:1;accent-color:var(--blue-deep);}
+  .pts-val{font-family:'Quicksand',sans-serif;font-weight:700;font-size:26px;color:var(--coin);min-width:54px;text-align:right;}
+  .sheet-actions{display:flex;gap:10px;margin-top:8px;}
+  .btn-ghost{flex:1;background:#fff;border:1px solid var(--line);color:var(--muted);font-family:'Quicksand',sans-serif;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;}
+  .btn-primary{flex:2;background:var(--blue);color:#15455F;border:none;font-family:'Quicksand',sans-serif;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;font-size:15px;box-shadow:0 4px 14px rgba(144,213,255,.55);}
+  .btn-primary:active{transform:scale(.98);}
+  .name-edit{display:flex;gap:8px;margin-bottom:10px;}
+  .name-edit input{flex:1;background:var(--card-hi);border:1px solid var(--line);border-radius:12px;color:var(--ivory);font-family:inherit;padding:11px;font-size:14px;font-weight:600;}
+  .set-action{width:100%;background:var(--card-hi);border:1px solid var(--line);color:var(--ivory);font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer;margin-bottom:10px;text-align:left;display:flex;align-items:center;gap:9px;}
+  .set-action:active{background:var(--bg-2);}
+  .set-action .tail{margin-left:auto;color:var(--muted);font-weight:600;font-size:12px;}
+  .danger-link{background:none;border:none;color:var(--coral);font-family:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:8px 0 2px;font-weight:700;}
+
+  .fly{position:fixed;font-family:'Quicksand',sans-serif;font-weight:700;font-size:30px;color:var(--coin);pointer-events:none;z-index:80;text-shadow:0 2px 12px rgba(46,139,192,.45);}
+  @keyframes flyup{0%{transform:translateY(0) scale(.7);opacity:0;}20%{opacity:1;transform:translateY(-10px) scale(1.1);}100%{transform:translateY(-120px) scale(1);opacity:0;}}
+  .heart{position:fixed;pointer-events:none;z-index:79;font-size:18px;}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#fff;border:1px solid var(--blue);color:var(--ivory);padding:13px 20px;border-radius:16px;font-weight:700;font-size:14px;box-shadow:var(--shadow);z-index:90;opacity:0;transition:.3s;white-space:nowrap;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .levelup{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:85;pointer-events:none;}
+  .levelup.show{display:flex;animation:lvlpop .3s;}
+  @keyframes lvlpop{from{transform:scale(.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .levelup .card{background:#fff;border:1px solid var(--blue);border-radius:24px;padding:30px 40px;text-align:center;box-shadow:0 0 60px rgba(144,213,255,.6);}
+  .levelup .card .e{font-size:48px;}
+  .levelup .card .t{font-family:'Quicksand',sans-serif;font-size:24px;font-weight:700;margin-top:8px;}
+  .levelup .card .s{color:var(--coin);font-weight:700;margin-top:4px;}
+
+  @media (min-width:640px){
+    body{padding:28px 0;}
+    .app{background:#FFFFFF;border:1px solid var(--line);border-radius:30px;box-shadow:0 24px 60px rgba(90,140,180,.22);padding:8px 22px 34px;}
+    header{padding-top:22px;}
+    .scrim{align-items:center;background:rgba(90,140,180,.42);}
+    .sheet{border-radius:26px;max-width:430px;border-bottom:1px solid var(--line);box-shadow:0 30px 70px rgba(60,100,140,.35);}
+    .rolepick{min-height:80vh;}
+  }
+  @media (hover:hover){
+    .quest:hover,.reward:hover,.rp-btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(120,180,220,.22);}
+    .add-btn:hover,.btn-primary:hover,.complete-btn:hover,.fulfill-btn:hover,.redeem-btn:hover:not(:disabled){filter:brightness(1.05);}
+    .tabs button:hover{border-color:var(--blue);}
+  }
+</style>
+</head>
+<body>
+<div class="app"><div id="root"></div></div>
+<div class="scrim" id="scrim"><div class="sheet" id="sheet"></div></div>
+<div class="levelup" id="levelup"><div class="card"><div class="e">🎉</div><div class="t">Level Up!</div><div class="s" id="lvlText"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK (compat build so the existing code & onclick handlers keep working) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============================================================
+   ⬇⬇⬇  PASTE YOUR FIREBASE CONFIG HERE  ⬇⬇⬇
+   Firebase console → Project settings → Your apps → SDK setup
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAVMIcqC-Lm1cY2QiUQ7VkGHkUsiJv5t28",
+  authDomain: "polarise-d3854.firebaseapp.com",
+  projectId: "polarise-d3854",
+  storageBucket: "polarise-d3854.firebasestorage.app",
+  messagingSenderId: "792812916784",
+  appId: "1:792812916784:web:d90a94dbf910b71e6b5df5"
+};
+/* ============================================================ */
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const DOC = db.collection('polarise').doc('shared');   // one shared game doc for the two of you
+
+const XP_PER_LEVEL = 500;
+const LS_IDENTITY = 'polarise-identity';   // which side THIS device is (kept local, never shared)
+
+const DEFAULT_STATE = {
+  identity: null,            // overlaid from localStorage per-device
+  masterPassword: null,      // shared (so it persists); only his side ever uses it
+  lastResetDate: null,
+  players: { him:{name:'You'}, her:{name:'Her', points:0, totalEarned:0, streak:0, lastDay:null} },
+  quests: [], rewards: [], redemptions: [], activity: [], tab:'quests'
+};
+
+let state = structuredClone(DEFAULT_STATE);
+let viewAs = null;     // runtime-only peek; never saved
+let synced = false;    // becomes true after first Firestore snapshot
+
+function identityLS(){ try{ return localStorage.getItem(LS_IDENTITY)||null; }catch(e){ return null; } }
+function setIdentityLS(v){ try{ v?localStorage.setItem(LS_IDENTITY,v):localStorage.removeItem(LS_IDENTITY); }catch(e){} }
+
+function deepMerge(base,over){ const o=Object.assign({},base,over); o.players=Object.assign({},base.players,over.players||{}); o.players.her=Object.assign({},base.players.her,(over.players&&over.players.her)||{}); o.players.him=Object.assign({},base.players.him,(over.players&&over.players.him)||{}); return o; }
+
+/* live sync — fires immediately and again on every change from either phone */
+function load(){
+  state.identity = identityLS();
+  root().innerHTML = `<div class="empty" style="padding-top:120px;"><span class="big">🌙</span>Connecting…</div>`;
+  DOC.onSnapshot(snap=>{
+    const localId = identityLS(), localTab = state.tab;
+    if(snap.exists){
+      state = deepMerge(structuredClone(DEFAULT_STATE), snap.data());
+    }else{
+      state = structuredClone(DEFAULT_STATE); seedIfEmpty(); save();  // create the shared doc once
+    }
+    state.identity = localId;
+    state.tab = localTab || 'quests';
+    synced = true;
+    checkDailyReset();
+    render();
+  }, err=>{ console.error(err); root().innerHTML = `<div class="empty" style="padding-top:100px;"><span class="big">⚠️</span>Couldn't reach the database.<br>Check your Firebase config &amp; Firestore rules.</div>`; });
+}
+
+/* save the SHARED fields only (identity & tab stay on-device) */
+function save(){
+  if(!synced && !DOC) return;
+  const {identity, tab, ...shared} = state;
+  DOC.set(shared).catch(e=>{ console.error('save failed',e); toast('Save failed — check connection'); });
+}
+
+function seedIfEmpty(){
+  if(state.quests.length===0 && state.rewards.length===0 && state.activity.length===0){
+    state.quests=[{id:uid(),title:'Send me a good-morning voice note',note:'',points:30,status:'active',at:Date.now()},{id:uid(),title:'Plan a surprise for the weekend',note:'Anything counts — coffee, a walk, a playlist.',points:80,status:'active',at:Date.now()}];
+    state.rewards=[{id:uid(),title:'Winner picks the next date',cost:100},{id:uid(),title:'Breakfast in bed, no questions',cost:250}];
+  }
+}
+
+const uid=()=>Math.random().toString(36).slice(2,9);
+const today=()=>new Date().toISOString().slice(0,10);
+const her=()=>state.players.her;
+const him=()=>state.players.him;
+const level=()=>Math.floor(her().totalEarned/XP_PER_LEVEL)+1;
+const xpInLevel=()=>her().totalEarned%XP_PER_LEVEL;
+const obscure=s=>btoa(unescape(encodeURIComponent(s||'')));
+function logActivity(emoji,text){ state.activity.unshift({id:uid(),emoji,text,at:Date.now()}); state.activity=state.activity.slice(0,40); }
+
+/* ---------- mutations ---------- */
+function completeQuest(id,ev){
+  const q=state.quests.find(x=>x.id===id); if(!q||q.status!=='active')return;
+  q.status='done'; q.completedAt=Date.now();
+  const before=level(); her().points+=q.points; her().totalEarned+=q.points;
+  const t=today(); if(her().lastDay!==t){ const y=new Date(Date.now()-864e5).toISOString().slice(0,10); her().streak=(her().lastDay===y)?her().streak+1:1; her().lastDay=t; }
+  logActivity('✅',`Cleared "${q.title}" — <b>+${q.points}</b>`); flyPoints(q.points,ev); save(); render();
+  if(level()>before){ setTimeout(showLevelUp,500); }
+}
+function addQuest(d){ state.quests.unshift({id:uid(),title:d.title,note:d.note,points:d.points,status:'active',at:Date.now()}); logActivity('📜',`<b>${him().name}</b> added a daily quest: "${d.title}"`); save(); render(); }
+function editQuest(id,d){ const q=state.quests.find(x=>x.id===id); if(!q)return; q.title=d.title; q.note=d.note; q.points=d.points; logActivity('✏️',`<b>${him().name}</b> updated quest: "${d.title}"`); save(); render(); toast('Quest updated ✓'); }
+
+function checkDailyReset(){
+  const t=today();
+  if(state.lastResetDate && state.lastResetDate!==t){
+    state.quests.forEach(q=>{ q.status='active'; delete q.completedAt; });
+    logActivity('🌅',`New day! ${state.quests.length} quest${state.quests.length===1?'':'s'} reset for <b>${her().name}</b>.`);
+    save();
+  }
+  if(state.lastResetDate!==t){ state.lastResetDate=t; save(); }
+}
+
+function timeToMidnight(){
+  const now=new Date(), midnight=new Date(now); midnight.setHours(24,0,0,0);
+  const ms=midnight-now, h=Math.floor(ms/3600000), m=Math.floor((ms%3600000)/60000);
+  return h>0?`${h}h ${m}m`:`${m}m`;
+}
+function addReward(d){ state.rewards.unshift({id:uid(),title:d.title,cost:d.cost}); logActivity('🎁',`<b>${him().name}</b> added a reward: "${d.title}"`); save(); render(); }
+function redeem(id){ const r=state.rewards.find(x=>x.id===id); if(!r)return; if(her().points<r.cost){ toast("Not enough points yet!"); return; } her().points-=r.cost; state.redemptions.unshift({id:uid(),title:r.title,cost:r.cost,status:'pending',at:Date.now()}); logActivity('💝',`<b>${her().name}</b> redeemed "${r.title}"!`); toast("Redeemed! 🎉"); save(); render(); }
+function fulfill(id){ const x=state.redemptions.find(r=>r.id===id); if(x){ x.status='fulfilled'; logActivity('🤝',`"${x.title}" was delivered 💕`); save(); render(); } }
+function deleteQuest(id){ state.quests=state.quests.filter(q=>q.id!==id); save(); render(); }
+function deleteReward(id){ if(confirm('Remove this reward?')){ state.rewards=state.rewards.filter(r=>r.id!==id); save(); render(); } }
+
+/* ---------- identity & auth ---------- */
+function chooseRole(r){ setIdentityLS(r); state.identity=r; viewAs=null; state.tab='quests'; render(); }
+function masterGate(){ if(!state.masterPassword) openCreatePw(); else openEnterPw(); }
+function peekHer(){ viewAs='her'; closeSheet(); render(); }
+function backToMaster(){ viewAs=null; render(); }
+function changeWho(){ setIdentityLS(null); state.identity=null; viewAs=null; closeSheet(); render(); }
+function setTab(t){ state.tab=t; render(); }
+
+/* ---------- render ---------- */
+const root=()=>document.getElementById('root');
+function render(){
+  if(!state.identity){ root().innerHTML=viewRolePick(); return; }
+  const role = viewAs || state.identity;
+  if(role==='him'){ root().innerHTML=viewHim(); }
+  else { root().innerHTML=(viewAs==='her'?peekBar():'')+viewHer(); }
+}
+
+function viewRolePick(){
+  const locked = state.masterPassword ? '🔒' : '➕';
+  return `<div class="rolepick"><div class="rp-card">
+    <div class="rp-logo">Polarise <span class="em">💞</span></div>
+    <div class="rp-sub">Who's opening the app?</div>
+    <button class="rp-btn master" onclick="masterGate()"><span class="rp-ic">⚔️<span class="lock">${locked}</span></span><span><b>${esc(him().name)}</b><small>Quest Master — password protected</small></span></button>
+    <button class="rp-btn player" onclick="chooseRole('her')"><span class="rp-ic">🌸</span><span><b>${esc(her().name)}</b><small>Player — clear quests &amp; earn points</small></span></button>
+    <div class="rp-foot">Picked once, remembered after. Only the Quest Master needs a password.</div>
+  </div></div>`;
+}
+function peekBar(){ return `<div class="peekbar">👀 Previewing ${esc(her().name)}'s side<button onclick="backToMaster()">← Back to my side</button></div>`; }
+
+function header(role){
+  const badge = role==='him' ? `<span class="role-badge master">⚔️ ${esc(him().name)}</span>` : `<span class="role-badge player">🌸 ${esc(her().name)}</span>`;
+  return `<header><div class="brand"><h1>Polarise <span class="em">💞</span></h1></div><div class="h-right">${badge}<button class="gear" onclick="openSettings()" aria-label="Settings">⚙︎</button></div></header>`;
+}
+function tabs(){ const t=[['quests','📜 Quests'],['rewards','🎁 Rewards'],['activity','✨ Activity']]; return `<div class="tabs">${t.map(([k,l])=>`<button class="${state.tab===k?'active':''}" onclick="setTab('${k}')">${l}</button>`).join('')}</div>`; }
+
+/* ===== HER APP ===== */
+function viewHer(){
+  const xp=xpInLevel(),pct=Math.round(xp/XP_PER_LEVEL*100);
+  const hero=`<div class="hero"><div class="who">Your balance</div><div class="bal"><span class="num">${her().points}</span><span class="lab">points to spend</span></div><div class="hero-meta"><span class="pill"><span class="e">⭐</span> Level ${level()}</span><span class="pill"><span class="e">🔥</span> ${her().streak} day${her().streak===1?'':'s'}</span><span class="pill"><span class="e">🏆</span> ${her().totalEarned} earned</span></div><div class="xpwrap"><div class="xpbar"><div class="xpfill" style="width:${pct}%"></div></div><div class="xptext"><span>${xp} / ${XP_PER_LEVEL} XP</span><span>${XP_PER_LEVEL-xp} to level ${level()+1}</span></div></div></div>`;
+  let body= state.tab==='quests'?herQuests():state.tab==='rewards'?herRewards():feed();
+  return header('her')+hero+tabs()+body;
+}
+function herQuests(){
+  const active=state.quests.filter(q=>q.status==='active');
+  const done=state.quests.filter(q=>q.status==='done');
+  const total=state.quests.length, doneCount=done.length;
+  const allDone=total>0&&doneCount===total;
+  let h=`<div class="section-head"><h2>Daily Quests</h2></div>`;
+  h+=`<div class="daily-bar">
+    <div class="daily-progress"><span class="dp-count">${doneCount}<span class="dp-sep">/</span>${total}</span><span class="dp-label">completed today</span></div>
+    <div class="dp-right"><span class="dp-reset">🌙 resets in ${timeToMidnight()}</span></div>
+  </div>`;
+  const pct=total?Math.round(doneCount/total*100):0;
+  h+=`<div class="day-xpbar"><div class="day-xpfill" style="width:${pct}%"></div></div>`;
+  if(allDone){ h+=`<div class="all-done-card">🎉 You cleared everything today! Points banked. Come back tomorrow.</div>`; }
+  if(active.length){ h+=active.map(q=>`<div class="quest"><div class="top"><div><div class="title">${esc(q.title)}</div>${q.note?`<div class="note">${esc(q.note)}</div>`:''}</div><div class="reward-tag">+${q.points}</div></div><div class="act"><button class="complete-btn" onclick="completeQuest('${q.id}',event)">Mark complete · +${q.points}</button></div></div>`).join(''); }
+  if(done.length){ h+=`<div class="grouplab sp">Done today ✓</div>`+done.map(q=>`<div class="quest done"><div class="top"><div><div class="title">${esc(q.title)}</div></div><div class="reward-tag">+${q.points}</div></div><div class="done-stamp">✓ +${q.points} points earned</div></div>`).join(''); }
+  if(!total){ h+=`<div class="empty"><span class="big">🌸</span>No daily quests set yet. Check back soon!</div>`; }
+  return h;
+}
+function herRewards(){
+  let h=`<div class="section-head"><h2>Reward shop</h2></div>`;
+  const onWay=state.redemptions.filter(r=>r.status==='pending');
+  if(onWay.length){ h+=`<div class="grouplab">On its way 💕</div>`+onWay.map(r=>`<div class="pending soft"><div><div class="t">${esc(r.title)}</div><div class="s">Redeemed — waiting on ${esc(him().name)} to deliver</div></div></div>`).join(''); }
+  if(state.rewards.length){ h+=`<div class="grouplab sp">Spend your points</div>`+state.rewards.map(r=>{const a=her().points>=r.cost;return `<div class="reward"><div class="info"><div class="t">${esc(r.title)}</div><div class="c">💎 ${r.cost} points</div></div><button class="redeem-btn" ${a?'':'disabled'} onclick="redeem('${r.id}')">${a?'Redeem':'Locked'}</button></div>`;}).join(''); }
+  else { h+=`<div class="empty"><span class="big">🎁</span>No rewards yet — ${esc(him().name)} hasn't added any.</div>`; }
+  return h;
+}
+
+/* ===== HIS APP ===== */
+function viewHim(){
+  const xp=xpInLevel(),pct=Math.round(xp/XP_PER_LEVEL*100), owe=state.redemptions.filter(r=>r.status==='pending').length;
+  const hero=`<div class="hero master"><div class="who">${esc(her().name)}'s progress</div><div class="bal"><span class="num">${her().points}</span><span class="lab">points she can spend</span></div><div class="hero-meta"><span class="pill"><span class="e">⭐</span> Level ${level()}</span><span class="pill"><span class="e">🔥</span> ${her().streak} day${her().streak===1?'':'s'}</span><span class="pill"><span class="e">🏆</span> ${her().totalEarned} earned</span></div><div class="xpwrap"><div class="xpbar"><div class="xpfill" style="width:${pct}%"></div></div><div class="xptext"><span>${xp} / ${XP_PER_LEVEL} XP</span><span>Level ${level()+1} at ${XP_PER_LEVEL-xp} more</span></div></div>${owe?`<div class="owe-pill">💎 You owe ${owe} reward${owe===1?'':'s'} — head to the Rewards tab</div>`:''}</div>`;
+  let body= state.tab==='quests'?himQuests():state.tab==='rewards'?himRewards():feed();
+  return header('him')+hero+tabs()+body;
+}
+function himQuests(){
+  const active=state.quests.filter(q=>q.status==='active');
+  const done=state.quests.filter(q=>q.status==='done');
+  const total=state.quests.length;
+  let h=`<div class="section-head"><h2>Daily Quests</h2><button class="add-btn" onclick="openQuestSheet()">＋ Add quest</button></div>`;
+  h+=`<div class="daily-bar">
+    <div class="daily-progress"><span class="dp-count">${done.length}<span class="dp-sep">/</span>${total}</span><span class="dp-label">${esc(her().name)} completed today</span></div>
+    <div class="dp-right"><span class="dp-reset">🌙 resets in ${timeToMidnight()}</span></div>
+  </div>`;
+  const pct=total?Math.round(done.length/total*100):0;
+  h+=`<div class="day-xpbar"><div class="day-xpfill" style="width:${pct}%"></div></div>`;
+  if(total){
+    h+=`<div class="grouplab sp">Quest lineup — resets every midnight</div>`;
+    h+=state.quests.map(q=>`<div class="quest ${q.status==='done'?'done':''}">
+      <div class="top"><div><div class="title">${esc(q.title)}</div>${q.note?`<div class="note">${esc(q.note)}</div>`:''}</div><div class="reward-tag">+${q.points}</div></div>
+      <div class="waiting">${q.status==='done'?'✓ Cleared today':'⏳ Not cleared yet'}
+        <div style="margin-left:auto;display:flex;gap:6px;">
+          <button class="reward-edit" onclick="openEditQuestSheet('${q.id}')">✏️ Edit</button>
+          <button class="x-btn" onclick="deleteQuest('${q.id}')">remove</button>
+        </div>
+      </div>
+    </div>`).join('');
+  } else {
+    h+=`<div class="empty"><span class="big">📜</span>No daily quests yet. Tap <b>Add quest</b> to build the lineup for ${esc(her().name)}.</div>`;
+  }
+  return h;
+}
+function himRewards(){
+  let h=`<div class="section-head"><h2>Reward shop</h2><button class="add-btn" onclick="openRewardSheet()">＋ New reward</button></div>`;
+  const owe=state.redemptions.filter(r=>r.status==='pending');
+  if(owe.length){ h+=`<div class="grouplab coin">You owe these 👀</div>`+owe.map(r=>`<div class="pending"><div><div class="t">${esc(r.title)}</div><div class="s">${esc(her().name)} cashed in ${r.cost} points</div></div><button class="fulfill-btn" onclick="fulfill('${r.id}')">Mark delivered</button></div>`).join(''); }
+  if(state.rewards.length){ h+=`<div class="grouplab sp">Rewards she can buy</div>`+state.rewards.map(r=>`<div class="reward"><div class="info"><div class="t">${esc(r.title)}</div><div class="c">💎 ${r.cost} points</div></div><div class="reward-actions"><button class="reward-edit" onclick="openEditRewardSheet('${r.id}')">✏️ Edit</button><button class="reward-del" onclick="deleteReward('${r.id}')" aria-label="Remove">×</button></div></div>`).join(''); }
+  else { h+=`<div class="empty"><span class="big">🎁</span>No rewards yet. Add things ${esc(her().name)} would want to earn.</div>`; }
+  return h;
+}
+
+function feed(){
+  if(!state.activity.length) return `<div class="section-head"><h2>Activity</h2></div><div class="empty"><span class="big">✨</span>Nothing's happened yet. Go make a move.</div>`;
+  return `<div class="section-head"><h2>Activity</h2></div>`+state.activity.map(a=>`<div class="feed-item"><div class="ic">${a.emoji}</div><div><div class="tx">${a.tx||a.text}</div><div class="tm">${timeAgo(a.at)}</div></div></div>`).join('');
+}
+
+/* ---------- sheets ---------- */
+function openSheet(html){ document.getElementById('sheet').innerHTML=html; document.getElementById('scrim').classList.add('show'); }
+function closeSheet(){ document.getElementById('scrim').classList.remove('show'); }
+document.getElementById('scrim').addEventListener('click',e=>{ if(e.target.id==='scrim') closeSheet(); });
+
+/* auth sheets */
+function openCreatePw(){
+  openSheet(`<h3>Create your password 🔑</h3><p class="hint">Set a password for the Quest Master side. ${esc(her().name)} won't be able to get in without it.</p>
+    <div class="field"><label>New password</label><input type="password" id="pw1" autocomplete="new-password"/></div>
+    <div class="field"><label>Confirm password</label><input type="password" id="pw2" autocomplete="new-password"/></div>
+    <div class="sheet-actions"><button class="btn-ghost" onclick="closeSheet()">Cancel</button><button class="btn-primary" onclick="submitCreatePw()">Set &amp; enter</button></div>`);
+}
+function submitCreatePw(){
+  const a=document.getElementById('pw1').value, b=document.getElementById('pw2').value;
+  if(a.length<4){ toast('Use at least 4 characters'); return; }
+  if(a!==b){ toast("Passwords don't match"); return; }
+  state.masterPassword=obscure(a); save(); closeSheet(); chooseRole('him');
+}
+function openEnterPw(){
+  openSheet(`<h3>Quest Master 🔒</h3><p class="hint">Enter your password to access your side.</p>
+    <div class="field"><label>Password</label><input type="password" id="pwIn" autocomplete="current-password"/></div>
+    <div class="sheet-actions"><button class="btn-ghost" onclick="closeSheet()">Cancel</button><button class="btn-primary" onclick="submitEnterPw()">Unlock</button></div>`);
+  setTimeout(()=>{const i=document.getElementById('pwIn'); if(i){ i.focus(); i.addEventListener('keydown',e=>{if(e.key==='Enter')submitEnterPw();}); }},50);
+}
+function submitEnterPw(){
+  const v=document.getElementById('pwIn').value;
+  if(obscure(v)===state.masterPassword){ closeSheet(); chooseRole('him'); }
+  else { toast('Wrong password'); }
+}
+function openChangePw(){
+  openSheet(`<h3>Change password 🔑</h3>
+    <div class="field"><label>New password</label><input type="password" id="cpw1" autocomplete="new-password"/></div>
+    <div class="field"><label>Confirm new password</label><input type="password" id="cpw2" autocomplete="new-password"/></div>
+    <div class="sheet-actions"><button class="btn-ghost" onclick="openSettings()">Back</button><button class="btn-primary" onclick="submitChangePw()">Save</button></div>`);
+}
+function submitChangePw(){
+  const a=document.getElementById('cpw1').value,b=document.getElementById('cpw2').value;
+  if(a.length<4){ toast('Use at least 4 characters'); return; }
+  if(a!==b){ toast("Passwords don't match"); return; }
+  state.masterPassword=obscure(a); save(); closeSheet(); toast('Password updated');
+}
+
+/* content sheets */
+function openQuestSheet(){
+  openSheet(`<h3>New quest 📜</h3>
+    <div class="field"><label>What's the quest?</label><input type="text" id="qTitle" placeholder="e.g. Cook dinner tonight" autocomplete="off"/></div>
+    <div class="field"><label>Note (optional)</label><textarea id="qNote" rows="2" placeholder="Any details…"></textarea></div>
+    <div class="field"><label>Points reward</label><div class="pts-row"><input type="range" id="qPts" min="10" max="300" step="10" value="50" oninput="document.getElementById('qPtsVal').textContent=this.value"/><span class="pts-val" id="qPtsVal">50</span></div></div>
+    <div class="sheet-actions"><button class="btn-ghost" onclick="closeSheet()">Cancel</button><button class="btn-primary" onclick="submitQuest()">Set quest</button></div>`);
+}
+function submitQuest(){ const t=document.getElementById('qTitle').value.trim(); if(!t){ toast('Give the quest a name'); return; } addQuest({title:t,note:document.getElementById('qNote').value.trim(),points:+document.getElementById('qPts').value}); closeSheet(); }
+
+function openEditQuestSheet(id){
+  const q=state.quests.find(x=>x.id===id); if(!q)return;
+  openSheet(`<h3>Edit quest ✏️</h3>
+    <div class="field"><label>Quest</label><input type="text" id="eqTitle" value="${esc(q.title)}" autocomplete="off"/></div>
+    <div class="field"><label>Note (optional)</label><textarea id="eqNote" rows="2">${esc(q.note||'')}</textarea></div>
+    <div class="field"><label>Points reward</label><div class="pts-row"><input type="range" id="eqPts" min="10" max="300" step="10" value="${q.points}" oninput="document.getElementById('eqPtsVal').textContent=this.value"/><span class="pts-val" id="eqPtsVal">${q.points}</span></div></div>
+    <div class="sheet-actions"><button class="btn-ghost" onclick="closeSheet()">Cancel</button><button class="btn-primary" onclick="submitEditQuest('${id}')">Save changes</button></div>`);
+}
+function submitEditQuest(id){ const t=document.getElementById('eqTitle').value.trim(); if(!t){ toast('Give the quest a name'); return; } editQuest(id,{title:t,note:document.getElementById('eqNote').value.trim(),points:+document.getElementById('eqPts').value}); closeSheet(); }
+function openRewardSheet(){
+  openSheet(`<h3>New reward 🎁</h3>
+    <div class="field"><label>What's the reward?</label><input type="text" id="rTitle" placeholder="e.g. I pick the movie" autocomplete="off"/></div>
+    <div class="field"><label>Cost in points</label><div class="pts-row"><input type="range" id="rCost" min="50" max="1000" step="25" value="200" oninput="document.getElementById('rCostVal').textContent=this.value"/><span class="pts-val" id="rCostVal">200</span></div></div>
+    <div class="sheet-actions"><button class="btn-ghost" onclick="closeSheet()">Cancel</button><button class="btn-primary" onclick="submitReward()">Add reward</button></div>`);
+}
+function submitReward(){ const t=document.getElementById('rTitle').value.trim(); if(!t){ toast('Name the reward'); return; } addReward({title:t,cost:+document.getElementById('rCost').value}); closeSheet(); }
+
+function openEditRewardSheet(id){
+  const r=state.rewards.find(x=>x.id===id); if(!r) return;
+  openSheet(`<h3>Edit reward ✏️</h3>
+    <div class="field"><label>Reward name</label><input type="text" id="erTitle" value="${esc(r.title)}" autocomplete="off"/></div>
+    <div class="field"><label>Cost in points</label><div class="pts-row"><input type="range" id="erCost" min="50" max="1000" step="25" value="${r.cost}" oninput="document.getElementById('erCostVal').textContent=this.value"/><span class="pts-val" id="erCostVal">${r.cost}</span></div></div>
+    <div class="sheet-actions"><button class="btn-ghost" onclick="closeSheet()">Cancel</button><button class="btn-primary" onclick="submitEditReward('${id}')">Save changes</button></div>`);
+}
+function submitEditReward(id){
+  const r=state.rewards.find(x=>x.id===id); if(!r) return;
+  const t=document.getElementById('erTitle').value.trim(); if(!t){ toast('Give the reward a name'); return; }
+  r.title=t; r.cost=+document.getElementById('erCost').value;
+  logActivity('✏️',`<b>${him().name}</b> updated reward: "${t}"`);
+  save(); closeSheet(); render(); toast('Reward updated ✓');
+}
+
+/* settings — branch by true identity so peeking keeps master controls */
+function openSettings(){ openSheet(state.identity==='him' ? masterSettings() : playerSettings()); }
+function masterSettings(){
+  return `<h3>Settings ⚙︎</h3>
+    <div class="field"><label>Names</label><div class="name-edit"><input type="text" id="nHim" value="${esc(him().name)}" placeholder="You"/><input type="text" id="nHer" value="${esc(her().name)}" placeholder="Her"/></div></div>
+    <button class="set-action" onclick="saveNamesThen(peekHer)">👀 Peek at ${esc(her().name)}'s side <span class="tail">preview</span></button>
+    <button class="set-action" onclick="openChangePw()">🔑 Change password</button>
+    <button class="set-action" onclick="saveNamesThen(changeWho)">🔁 Change who I am</button>
+    <button class="danger-link" onclick="resetAll()">Reset everything (points, quests, rewards)</button>
+    <div class="sheet-actions" style="margin-top:16px;"><button class="btn-primary" onclick="saveSettings()">Done</button></div>`;
+}
+function playerSettings(){
+  return `<h3>Settings ⚙︎</h3>
+    <div class="field"><label>Your name</label><div class="name-edit"><input type="text" id="nHer" value="${esc(her().name)}" placeholder="Her"/></div></div>
+    <button class="set-action" onclick="changeWho()">🔁 Hand the phone over (back to picker)</button>
+    <div class="sheet-actions" style="margin-top:16px;"><button class="btn-primary" onclick="saveSettings()">Done</button></div>`;
+}
+function grabNames(){ const a=document.getElementById('nHim'),b=document.getElementById('nHer'); if(a)him().name=a.value.trim()||'You'; if(b)her().name=b.value.trim()||'Her'; }
+function saveSettings(){ grabNames(); save(); closeSheet(); render(); }
+function saveNamesThen(fn){ grabNames(); save(); fn(); }
+function resetAll(){ if(confirm('Wipe all points, quests, and rewards? This cannot be undone.')){ const names={him:him().name,her:her().name},id=state.identity,pw=state.masterPassword; state=structuredClone(DEFAULT_STATE); state.players.him.name=names.him; state.players.her.name=names.her; state.identity=id; state.masterPassword=pw; seedIfEmpty(); save(); closeSheet(); render(); } }
+
+/* ---------- FX ---------- */
+function flyPoints(n,ev){ const x=ev?ev.clientX:innerWidth/2,y=ev?ev.clientY:innerHeight/2; const f=document.createElement('div'); f.className='fly'; f.textContent='+'+n; f.style.left=(x-20)+'px'; f.style.top=(y-30)+'px'; f.style.animation='flyup 1.1s forwards'; document.body.appendChild(f); setTimeout(()=>f.remove(),1100); for(let i=0;i<8;i++){ const h=document.createElement('div'); h.className='heart'; h.textContent=['💙','💗','✨','🌸'][i%4]; h.style.left=x+'px'; h.style.top=y+'px'; document.body.appendChild(h); const ang=Math.random()*6.28,dist=40+Math.random()*60; h.animate([{transform:'translate(0,0) scale(.5)',opacity:1},{transform:`translate(${Math.cos(ang)*dist}px,${Math.sin(ang)*dist-30}px) scale(1.1)`,opacity:0}],{duration:900,easing:'cubic-bezier(.2,.7,.3,1)'}); setTimeout(()=>h.remove(),900); } }
+let toastTimer; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2000); }
+function showLevelUp(){ document.getElementById('lvlText').textContent=`${her().name} reached Level ${level()}`; const l=document.getElementById('levelup'); l.classList.add('show'); setTimeout(()=>l.classList.remove('show'),2200); }
+function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function timeAgo(t){ const s=Math.floor((Date.now()-t)/1000); if(s<60)return 'just now'; if(s<3600)return Math.floor(s/60)+'m ago'; if(s<86400)return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
+
+load();
+</script>
+</body>
+</html>
